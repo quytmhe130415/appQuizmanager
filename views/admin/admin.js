@@ -1,5 +1,6 @@
 "use strict";
 const { ipcRenderer, dialog } = require("electron");
+
 const divCreater = document.querySelector(".create");
 const logout = document.querySelector("#logout");
 const imgCreate = document.querySelector("#icCreate");
@@ -10,8 +11,6 @@ logout.addEventListener("click", (e) => {
   e.preventDefault();
   ipcRenderer.send("logout-tab");
 });
-// no ko vao cuoi list y ban? toan vao index linh tinh
-
 //* Send message get quizzes
 ipcRenderer.send("get-quizzes");
 
@@ -19,21 +18,17 @@ ipcRenderer.send("get-quizzes");
 ipcRenderer.on("create-quiz", (_, quizzes) => {
   createQuiz(quizzes);
 });
-
 //* Send message to create quiz
 imgCreate.addEventListener("click", (e) => {
   e.preventDefault();
   ipcRenderer.send("open-create");
 });
-// document.querySelector('input[type="text"]')
-
-//* send message delete
 //* create element quiz...!
 async function createQuiz(quizzes) {
   let count = 1;
   const arrAns = ["A", "B", "C", "D"];
   for (let item of quizzes) {
-    console.log(item);
+    // console.log(item);
     const divDisplay = document.createElement("div");
     divDisplay.setAttribute("id", item._id);
     divDisplay.setAttribute("class", "divDisplay");
@@ -48,8 +43,8 @@ async function createQuiz(quizzes) {
     //* answer
     const lstAnswer = item.answer;
     const corectAnswers = item.correct;
-
     const divAnswer = document.createElement("div");
+
     divAnswer.setAttribute("class", "divAns");
     let i = 0;
     for (const answer of lstAnswer) {
@@ -59,17 +54,16 @@ async function createQuiz(quizzes) {
       ansInput.setAttribute("class", "ansInput");
       ansInput.value = `${answer}`;
       ansInput.disabled = true;
-
       //*create label
       const labelABCD = document.createElement("label");
       labelABCD.innerText = `${arrAns[i]}`;
       labelABCD.setAttribute("class", "lblAns");
-
+      //* create checkbox
       const checkBox = document.createElement("input");
       checkBox.setAttribute("type", "checkbox");
       checkBox.setAttribute("class", "cbAns");
       checkBox.setAttribute("id", i);
-
+      //* appenchild 
       divAns.appendChild(labelABCD);
       divAns.appendChild(ansInput);
       divAns.appendChild(checkBox);
@@ -86,14 +80,12 @@ async function createQuiz(quizzes) {
       }
       i++;
     }
-
     //* create element icon
     const iconEdit = document.createElement("i");
     const iconDelete = document.createElement("i");
     const iconSave = document.createElement("i");
     iconEdit.setAttribute("class", "fas fa-edit");
     iconEdit.setAttribute("id", "icEdit"); //`id-${count}`
-
     //* click to edit
     iconEdit.addEventListener("click", (e) => {
       e.preventDefault();
@@ -103,13 +95,11 @@ async function createQuiz(quizzes) {
         input.disabled = false;
       }
     });
-
     //* click to save
     iconSave.addEventListener("click", (e) => {
       e.preventDefault();
       //* get all input answer!!!
       const inputEdits = divDisplay.querySelectorAll(`input`);
-      // const newQuiz = new Quiz();
       divDisplay.querySelector("textarea").disabled = true;
       const txtQues = divDisplay.querySelector("textarea").value;
       const arrText = txtQues.split(".");
@@ -122,7 +112,6 @@ async function createQuiz(quizzes) {
       for (const itemAns of inputAnswer) {
         answers.push(itemAns.value);
       }
-      // const answer = arrAns;
       const lstCheckBox = divDisplay.querySelectorAll('input[type="checkbox"]');
       const corrects = [];
       for (const cb of lstCheckBox) {
@@ -145,6 +134,7 @@ async function createQuiz(quizzes) {
       ipcRenderer.send("delete-quiz", idQuiz);
       divDisplay.remove();
     });
+    //* appenchild
     divDisplay.appendChild(divAnswer);
     divDisplay.appendChild(iconEdit);
     divDisplay.appendChild(iconSave);

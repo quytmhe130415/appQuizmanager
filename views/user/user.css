@@ -80,14 +80,55 @@ body {
 }
 
 .textareaQuestion {
+    font-family: Arial, Helvetica, sans-serif;
     border: none;
     border-bottom: 1px solid gray;
-    font-size: 24px;
+    font-size: 15px;
     outline: none;
     resize: none;
     background-color: transparent;
-    margin: 5px;
-    /* width: 98%; */
-    width: 120px;
+    margin-left: 10px;
+    margin-top: 10px;
+    width: 98%;
     height: 50px;
+    font-weight: bold;
+}
+.answerEl{
+    margin-top: 10px;
+    margin-left: 20px;
+}
+.cbCorrect{
+    margin-right: 10px;
+    width: 15px;
+    height: 15px;
+}
+.lblAns{
+    margin-left: 10px;
+    color: #ff3838;
+}
+.exit{
+    height: 20px;
+    width: 30px;
+    padding: 2px;
+    background-color: #3c40c6;
+    color: cornsilk;
+    border: 1px solid darkviolet;
+    margin-top: 8px;
+    margin-left: 96%;
+}
+.outExam{
+    display: flex;
+    justify-content: space-around;
+    margin-right: 10px;
+}
+.timer{
+    display: flex;
+    justify-content: row;
+    margin-top: 10px;
+}
+.lblTime{
+    margin-left: 312px;
+}
+.timeDown{
+    margin-left: 5px;
 }

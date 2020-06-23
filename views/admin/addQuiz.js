@@ -8,24 +8,21 @@ const btnExit = document.querySelector("#exit");
 const btnSave = document.querySelector(".save");
 const btnReset = document.querySelector("#reset");
 const { Quiz } = require("../../model/quiz");
-// const e = require("express");
+
 //* check selected tinh sau!!!
 select.addEventListener("change", (e) => {
     e.preventDefault();
 });
-
 //* undo list quizzes
 btnList.addEventListener("click", (e) => {
     e.preventDefault();
     ipcRenderer.send("undo-list");
 });
-
 //* exit program!!!
 btnExit.addEventListener("click", (e) => {
     e.preventDefault();
     ipcRenderer.send("exit-program");
 });
-
 //* create question
 btnCreate.addEventListener("click", (e) => {
     e.preventDefault();
@@ -44,6 +41,7 @@ btnCreate.addEventListener("click", (e) => {
     inputAnswer.setAttribute("type", "text");
     inputAnswer.setAttribute("class", "inputAns");
     inputAnswer.required = true;
+    
     divAns.appendChild(label);
     divAns.appendChild(inputAnswer);
     divAns.appendChild(checkBox);
@@ -55,8 +53,6 @@ btnCreate.addEventListener("click", (e) => {
         divAns.remove();
     });
 });
-
-
 //* add event button save
 btnSave.addEventListener("click", (e) => {
     e.preventDefault();
@@ -76,15 +72,8 @@ btnSave.addEventListener("click", (e) => {
     }
     const quiz = new Quiz(question, answers, correct, Date.now());
     ipcRenderer.send("add-newQuiz", quiz);
-
-    // console.log('ques: ' + ques);
-    // console.log('answer: ' + arrAns);
-    // console.log('correct : ' + arrCb);
-    // console.log('new quiz : ' + quiz);
-    // console.log('key : ' + Object.keys(quiz));
-    // console.log('value: ' + Object.values(quiz));
 });
-
+//* event click reset
 btnReset.addEventListener("click", (e) => {
     e.preventDefault();
     //* reset question

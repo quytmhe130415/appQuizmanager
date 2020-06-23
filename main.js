@@ -23,7 +23,6 @@ const createWindow = () => {
     // mainWindow.setMenu(null);
     mainWindow.webContents.openDevTools();
     mainWindow.loadFile("./views/login/login.html");
-
     //! show admin or user!
     ipcMain.on("show-admin-user", async(_, account) => {
         const accounts = await getAccount(account.name, account.pass);
@@ -53,7 +52,7 @@ const createWindow = () => {
     });
 
     //! send list quiz for user.js to display
-    ipcMain.on('getAllQuizzes', async(e) => {
+    ipcMain.on('get-all-quiz', async(e) => {
         const quizzes = await getQuiz();
         e.reply('list-quiz', quizzes);
     })
@@ -90,14 +89,6 @@ const createWindow = () => {
             });
         }
     });
-
-    //   ipcMain.on("open-create", async (_) => {
-    //     mainWindow.loadFile("../quizmanager/views/admin/addQuiz.html");
-    //   });
-    //   ipcMain.on("undo-list", (_) => {
-    //     mainWindow.loadFile("../quizmanager/views/admin/admins.html");
-    //   });
-
     //! exit program
     ipcMain.on("exit-program", (_) => {
         process.exit();
@@ -114,7 +105,6 @@ const createWindow = () => {
             });
         });
     }
-
     //* function getAll quizzes
     function getQuiz() {
         return new Promise((res, reject) => {
@@ -144,7 +134,6 @@ const createWindow = () => {
         });
         return checkUpdate;
     }
-
     //* function delete quiz
     function deleteQuiz(_id) {
         let checkDelete = true;
@@ -160,7 +149,6 @@ const createWindow = () => {
         return checkDelete;
     }
 };
-
 let mainCreate = null;
 //! add new quiz
 ipcMain.on("open-create", async(_) => {
@@ -175,7 +163,7 @@ ipcMain.on("open-create", async(_) => {
     });
     mainCreate.loadFile("../quizmanager/views/admin/addQuiz.html");
     ipcMain.on("add-newQuiz", (event, quiz) => {
-        console.log(quiz);
+        // console.log(quiz);
         if (quiz.question === "") {
             dialog
                 .showMessageBox({
@@ -211,12 +199,9 @@ ipcMain.on("open-create", async(_) => {
             }
         }
     });
-
     ipcMain.on("undo-list", (_) => {
         mainWindow.loadFile("../quizmanager/views/admin/admins.html");
-        // mainCreate().hide();
     });
-
     //* function insert quiz
     function addQuiz(quiz) {
         let checkAddQuiz = true;
@@ -236,7 +221,6 @@ ipcMain.on("open-create", async(_) => {
         mainWindow.show();
     });
 });
-
 app.whenReady().then(() => {
     createWindow();
 });
