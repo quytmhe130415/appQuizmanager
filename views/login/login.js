@@ -1,27 +1,24 @@
 "use strict";
 const { ipcRenderer, dialog } = require("electron");
-// const { validateUserName } = require("validate.js");
-const { Account } = require("../../model/account");
 const btnSubmit = document.querySelector("#submit");
 const register = document.querySelector("#register");
-const errName = document.querySelector("errName");
-const errPass = document.querySelector("errPass");
-const Datastore = require("nedb");
-const db = new Datastore({ filename: "../../database/Account.db" });
-db.loadDatabase();
+// const { Account } = require("../../model/account");
+// const Datastore = require("nedb");
+// const db = new Datastore({ filename: "../../database/Account.db" });
+// db.loadDatabase();
 
 //* click to submit
-btnSubmit.addEventListener("click", async (e) => {
-  e.preventDefault();
-  const name = document.querySelector("#uname").value;
-  const pass = document.querySelector("#pass").value;
-  ipcRenderer.send("show-admin-user", { name: name, pass: pass });
+btnSubmit.addEventListener("click", async(e) => {
+    e.preventDefault();
+    const name = document.querySelector("#uname").value;
+    const pass = document.querySelector("#pass").value;
+    ipcRenderer.send("show-admin-user", { name: name, pass: pass });
 });
 
 //* click to dky
 register.addEventListener("click", (e) => {
-  e.preventDefault();
-  ipcRenderer.send("show-register");
+    e.preventDefault();
+    ipcRenderer.send("show-register");
 });
 
 
