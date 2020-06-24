@@ -9,8 +9,7 @@ html {
 
 body {
     height: 100%;
-    background: rgb(2, 0, 36);
-    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(121, 61, 9, 1) 35%, rgba(0, 212, 255, 1) 100%);
+    background-color: #45aaf2;
 }
 
 .main {
@@ -20,115 +19,52 @@ body {
     margin-top: 5%;
     border: 1px solid #f5f6fa;
     background-color: #ffffff;
+    
 }
 
 .header {
     background: #747d8c;
     height: 80px;
+    /* background-image: url(../admin/spring2020.png); */
 }
-
-.footer {
-    background: #747d8c;
-    height: 80px;
+img{
+    height: 100px;
+    width: 100%;
 }
-
 .content {
     background: #ffffff;
-    height: 320px;
-    padding-top: 20px;
+    height: 400px;
+    /* padding-top: 20px; */
+    background-color: #d2dae2;
 }
-
-.multi {
+button{
+    border: 1px solid tomato;
+    background-color: #485460;
+    height: 30px;
+    width: 120px;
+    color: white;
     font-weight: bold;
-    font-size: 20px;
-    color: #f1f2f6;
-    margin-top: 20px;
-    margin-left: 10px;
-}
-
-.create-quiz {
-    height: 30px;
-    width: 30px;
-    margin: 5px;
-    border: 1px solid snow;
-    padding: 5px;
-    background-color: #EA2027;
-    color: #ffffff;
-}
-
-.btnQues {
-    height: 30px;
-    width: 30px;
-    background-color: #ff3838;
-    border: 2px solid #f5f6fa;
-    color: #ffffff;
-    padding: 5px;
-    margin-top: 10px;
-    margin-left: 5px;
+    padding: 3px;
     cursor: pointer;
 }
-
-.btnQues:hover {
-    background-color: #ff4d4d;
+.takeQuiz{
+    margin-top: 133px;
+    margin-left: 235px;
 }
-
-.lblQues {
-    margin-top: 20px;
-    margin-left: 10px;
-    font-size: 18px;
-    font-family: Arial, Helvetica, sans-serif;
+button:hover{
+    backgroun:#485460;
 }
-
-.textareaQuestion {
-    font-family: Arial, Helvetica, sans-serif;
-    border: none;
-    border-bottom: 1px solid gray;
-    font-size: 15px;
-    outline: none;
-    resize: none;
-    background-color: transparent;
-    margin-left: 10px;
-    margin-top: 10px;
-    width: 98%;
-    height: 50px;
-    font-weight: bold;
-}
-.answerEl{
-    margin-top: 10px;
-    margin-left: 20px;
-}
-.cbCorrect{
-    margin-right: 10px;
-    width: 15px;
-    height: 15px;
-}
-.lblAns{
-    margin-left: 10px;
-    color: #ff3838;
-}
-.exit{
-    height: 20px;
-    width: 30px;
-    padding: 2px;
-    background-color: #3c40c6;
-    color: cornsilk;
-    border: 1px solid darkviolet;
-    margin-top: 8px;
-    margin-left: 96%;
-}
-.outExam{
-    display: flex;
-    justify-content: space-around;
-    margin-right: 10px;
-}
-.timer{
-    display: flex;
-    justify-content: row;
-    margin-top: 10px;
-}
-.lblTime{
-    margin-left: 312px;
-}
-.timeDown{
+.logout{
+    margin-top: 5px;
     margin-left: 5px;
+    height: 25px;
+    width: 25px;
+    /* background-color: ; */
 }
+
+p{
+    color: #ff6b81;
+    display: inline;
+    margin-left: 10px;
+}
+
