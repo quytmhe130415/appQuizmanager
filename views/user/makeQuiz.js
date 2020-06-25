@@ -11,6 +11,7 @@ const Minute_Default = 60;
 const Second_Default = 60;
 const nowDate = new Date();
 let duration = 0;
+let newQuizzes = []
 
 ipcRenderer.send("get-all-quiz");
 ipcRenderer.on("list-quiz", (_, quizzes) => {
@@ -33,7 +34,6 @@ ipcRenderer.on("list-quiz", (_, quizzes) => {
       minute = Minute_Default;
     }
     if (Total_Time < Second_Default) {
-      // pTimer.style.color = "#747d8c";
       pTimer.textContent = `0:00:00`;
     }
     if (Total_Time < 0) {
@@ -46,29 +46,32 @@ ipcRenderer.on("list-quiz", (_, quizzes) => {
 
   for (let i = 0; i < quizzes.length; i++) {
     generateBtnQuestion(i + 1, quizzes[i]);
+    newQuizzes.push(quizzes[i]);
   }
-  checkFinish();
 });
 
-const createQuizFrame = (quizzes) => {
+
+const createQuizFrame = (quiz) => {
   displayQuestion.innerHTML = "";
   displayAnswer.innerHTML = "";
   const divQuestion = document.createElement("div");
   const question = document.createElement("textarea");
   question.setAttribute("class", "textareaQuestion");
   question.readOnly = true;
-  question.value = `Question: ${quizzes.question}`;
+  question.value = `Question: ${quiz.question}`;
   divQuestion.appendChild(question);
   displayQuestion.appendChild(divQuestion);
+
   const lblAns = document.createElement("label");
   lblAns.setAttribute("class", "lblAns");
   lblAns.textContent = "Choose the correct answer below: ";
   displayAnswer.appendChild(lblAns);
-  // const txtAnswers = [];
-  for (let i = 0; i < quizzes.answer.length; i++) {
-    quizzes.userChoices = quizzes.userChoices || [];
+
+  for (let i = 0; i < quiz.answer.length; i++) {
+    quiz.userChoices = quiz.userChoices || [];
+    
     // console.log(quizzes.userChoices);
-    const currentAnswer = quizzes.answer[i];
+    const currentAnswer = quiz.answer[i];
     const answerElement = document.createElement("div");
     answerElement.setAttribute("class", "answerEl");
 
@@ -76,31 +79,31 @@ const createQuizFrame = (quizzes) => {
     inputEl.setAttribute("type", "checkbox");
     inputEl.setAttribute("id", i);
     inputEl.setAttribute("class", "cbCorrect");
-    inputEl.checked = quizzes.userChoices.some(
+    inputEl.checked = quiz.userChoices.some(
       (choice) => choice === currentAnswer
     );
 
     const inputAns = document.createElement("inputAns");
     inputAns.innerText = currentAnswer;
-
     inputEl.addEventListener("change", (e) => {
-      document.querySelector(`#_${quizzes._id}`).style.backgroundColor =
-        document.querySelectorAll("input:checked").length > 0 ? "green" : "red";
-
+      const inputCheckeds = [...document.querySelectorAll("input:checked")].map(itemAns => itemAns.id);
+      document.querySelector(`#_${quiz._id}`).style.backgroundColor =
+      inputCheckeds.length > 0 ? "green" : "red";
+        quiz.choices = inputCheckeds;
       if (e.target.checked) {
-        quizzes.userChoices.push(currentAnswer);
+        quiz.userChoices.push(currentAnswer);
       } else {
-        quizzes.userChoices = quizzes.userChoices.filter(
+        quiz.userChoices = quiz.userChoices.filter(
           (choice) => choice !== currentAnswer
         );
-      }
+      } 
     });
-
     answerElement.appendChild(inputEl);
     answerElement.appendChild(inputAns);
     displayAnswer.appendChild(answerElement);
   }
 };
+
 //* generate button question
 const generateBtnQuestion = (i, quiz) => {
   const btnQuiz = document.createElement("button");
@@ -110,25 +113,48 @@ const generateBtnQuestion = (i, quiz) => {
   btnQuiz.addEventListener("click", (e) => {
     e.preventDefault();
     createQuizFrame(quiz);
+    if(cbFinishTest.checked){
+      btnFinish.disabled = false;
+      const checkBoxes = document.querySelectorAll('.answers input[type=checkbox]');
+      for(const checkbox of checkBoxes){
+        checkbox.disabled = true;
+      }
+    }else{
+      btnFinish.disabled = true;
+      const checkBoxes = document.querySelectorAll('.answers input[type=checkbox]');
+      for(const checkbox of checkBoxes){
+        checkbox.disabled = false;
+      }
+    }
   });
   buttonQuestion.appendChild(btnQuiz);
   if (i === 1) {
     btnQuiz.click();
   }
 };
-//* check finish
-function checkFinish(){
-  if(cbFinishTest.checked){
-    console.log('haahh');
-    btnFinish.disabled = false;
-    btnFinish.addEventListener('click', (e) => {
-      preventDefault();
-      ipcRenderer.send('exam-online-screen');
-    })
-  }else{
-    console.log('noooo');
-    btnFinish.disabled = true;
-  }
-}
 
-// checkFinish();
+cbFinishTest.addEventListener('change',(e) => {
+  e.preventDefault();
+    if(cbFinishTest.checked){
+      btnFinish.disabled = false;
+      const checkBoxes = document.querySelectorAll('.answers input[type=checkbox]');
+      for(const checkbox of checkBoxes){
+        checkbox.disabled = true;
+      }
+      // ipcRenderer.send('newQuizzes', newQuizzes);
+      
+    }else{
+      btnFinish.disabled = true;
+      const checkBoxes = document.querySelectorAll('.answers input[type=checkbox]');
+      for(const checkbox of checkBoxes){
+        checkbox.disabled = false;
+      }
+    }
+});
+
+const dateTest = nowDate.getDate() + '-' + nowDate.getMonth() + '-' + nowDate.getFullYear();
+const timeTest = nowDate.getHours() + ':' + nowDate.getMinutes() + ':' + nowDate.getSeconds();
+
+btnFinish.addEventListener('click', (event) => {
+  ipcRenderer.send('exam-online-screen',{newQuizzes: newQuizzes, date: dateTest, time: timeTest});
+})

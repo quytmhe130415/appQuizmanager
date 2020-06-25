@@ -1,8 +1,6 @@
 "use strict";
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const fs = require("fs-extra");
-// const path = require("path");
-// const { type } = require("process");
 const Datastore = require("nedb");
 //* db Account...!
 const db = new Datastore({ filename: "./database/Account.db" });
@@ -10,7 +8,11 @@ db.loadDatabase();
 //* db quizzes...!
 const dbQuizzes = new Datastore({ filename: "./database/quiz_nature.db" });
 dbQuizzes.loadDatabase();
-
+//* db result ...!
+const dbResult= new Datastore({ filename: "./database/resultTest.db" });
+dbResult.loadDatabase();
+let nameUser;
+const { Result } = require('../quizmanager/model/result');
 let mainWindow = null;
 const createWindow = () => {
   mainWindow = new BrowserWindow({
@@ -21,7 +23,7 @@ const createWindow = () => {
     },
   });
   // mainWindow.setMenu(null);
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
   mainWindow.loadFile("./views/login/login.html");
   //! show admin or user!
   ipcMain.on("show-admin-user", async (_, account) => {
@@ -37,6 +39,10 @@ const createWindow = () => {
         mainWindow.loadFile("../quizmanager/views/admin/admins.html");
       } else {
         mainWindow.loadFile("../quizmanager/views/user/user.html");
+        ipcMain.on('name-user', (event) => {
+          nameUser = acc.name;
+          event.reply('return-name-user',nameUser);
+        });
       }
     }
   });
@@ -101,25 +107,28 @@ const createWindow = () => {
           console.log(err);
           reject(err);
         }
+        // getQuiz();
         resolve(data);
       });
     });
   }
   //* function getAll quizzes
-  function getQuiz() {
-    return new Promise((res, reject) => {
-      dbQuizzes
-        .find({})
-        .sort({ time: 1 })
-        .exec(function (err, data) {
-          if (err) {
-            reject(err);
-          }
-          res(data);
-        });
-    });
-  }
-  //* function update quiz
+
+  // function getQuiz() {
+  //   return new Promise((res, reject) => {
+  //     dbQuizzes
+  //       .find({})
+  //       .sort({ time: 1 })
+  //       .exec(function (err, data) {
+  //         if (err) {
+  //           reject(err);
+  //         }
+  //         res(data);
+  //       });
+  //   });
+  // }
+
+  //* function update quiz 
   function updateQuiz(quiz, _id) {
     let checkUpdate = true;
     console.log(quiz);
@@ -235,19 +244,85 @@ ipcMain.on("open-examsoftware", async (_) => {
     },
   });
   examOnline.loadFile("../quizmanager/views/user/makeQuiz.html");
-  examOnline.on("close", () => {
-      examOnline.hide();
-      mainWindow.show();
-  });
+  
 });
 
 ipcMain.on("comeback-login", (e) => {
   mainWindow.loadFile("../quizmanager/views/login/login.html");
 });
 
-ipcMain.on('exam-online-screen', (e) => {
-  examOnline.quit();
-})
+ipcMain.on('exam-online-screen', async (event, inforTest) => {
+  const newQuizzes = inforTest.newQuizzes;
+  const dateTest = inforTest.date;
+  const timeTest = inforTest.time;
+  const quizzes = await getQuiz();
+  let countCorrect = 0;
+  const totalQues = quizzes.length;
+  for(const oldQuiz of quizzes){
+    for(const newQuiz of newQuizzes){
+      if(oldQuiz._id === newQuiz._id){      
+        const convertChoice = newQuiz.choices.map(item => parseInt(item));
+        if(JSON.stringify(oldQuiz.correct) === JSON.stringify(convertChoice)){
+          countCorrect++;
+        }
+      }
+    }
+  }
+  const resultUser = new Result(nameUser,dateTest,timeTest,countCorrect,totalQues)
+  addResult(resultUser);
+  ipcMain.on('infor-user', async(event) => {
+    const resultUsers = getResult();
+    event.reply('total-correct', resultUsers);
+   });
+
+   examOnline.close();
+});
+//! check mark
+ipcMain.on('view-quiz', (_) => {
+  mainWindow.loadFile("../quizmanager/views/user/result.html");
+});
+
+//* function getAll quizzes
+function getQuiz() {
+  return new Promise((res, reject) => {
+    dbQuizzes
+      .find({})
+      .sort({ time: 1 })
+      .exec(function (err, data) {
+        if (err) {
+          reject(err);
+        }
+        res(data);
+      });
+  });
+}
+
+//* function insert result
+function addResult(result) {
+  dbQuizzes.insert(result, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("Insert success!!!");
+    }
+  });
+}
+
+//* function getAll record result
+function getResult() {
+  return new Promise((res, reject) => {
+    dbResult
+      .find({})
+      .sort({ time: 1 })
+      .exec(function (err, data) {
+        if (err) {
+          reject(err);
+        }
+        res(data);
+      });
+  });
+}
+
 app.whenReady().then(() => {
   createWindow();
 });

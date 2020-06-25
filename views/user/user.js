@@ -18,3 +18,8 @@ logout.addEventListener('click', (e) => {
     e.preventDefault();
     ipcRenderer.send('comeback-login');
 });
+
+btnView.addEventListener('click', (e) => {
+    e.preventDefault();
+    ipcRenderer.send('view-quiz');
+})

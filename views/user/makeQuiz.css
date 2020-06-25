@@ -148,6 +148,11 @@ body {
     cursor: pointer;
     margin-top: 10px;
 }
+
+#finish:hover{
+    background-color: #241b8a;
+}
+
 .checkWantFinish{
     color: #3c40c6;
     font-weight: bold;
